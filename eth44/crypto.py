@@ -19,13 +19,15 @@ bitcoin_curve = secp256k1()
 
 from rlp.utils import encode_hex
 
-from Crypto.Hash import keccak
-sha3_256 = lambda x: keccak.new(digest_bits=256, data=x)
-
+try:
+    from Crypto.Hash import keccak
+    def sha3_256(x): return keccak.new(digest_bits=256, data=x).digest()
+except ImportError:
+    import sha3 as _sha3
+    def sha3_256(x): return _sha3.keccak_256(x).digest()
 
 def sha3(seed):
-    return sha3_256(seed).digest()
-
+    return sha3_256(seed)
 
 def get_bytes(s):
     """Returns the byte representation of a hex- or byte-string."""
